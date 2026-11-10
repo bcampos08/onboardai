@@ -1,0 +1,85 @@
+{
+  "_note": "Synthetic handbook for testing only. Brightpath Inc. is a made-up company; no real company or employee data. Edit or add sections here (no code changes needed).",
+  "sections": [
+    {
+      "section_id": "sec-001",
+      "document_id": "doc-001",
+      "title": "Employee Handbook",
+      "heading": "Time Off",
+      "text": "Submit time off requests in the HR portal at least two weeks ahead. Full-time employees earn 15 vacation days per year.",
+      "source_page": 12
+    },
+    {
+      "section_id": "sec-002",
+      "document_id": "doc-001",
+      "title": "Employee Handbook",
+      "heading": "Dress Code",
+      "text": "Business casual dress is expected Monday through Thursday. Casual dress is allowed on Fridays.",
+      "source_page": 15
+    },
+    {
+      "section_id": "sec-003",
+      "document_id": "doc-001",
+      "title": "Employee Handbook",
+      "heading": "Work Hours",
+      "text": "Core work hours are 10 a.m. to 3 p.m. Outside those hours, schedules are flexible with your manager's approval.",
+      "source_page": 8
+    },
+    {
+      "section_id": "sec-004",
+      "document_id": "doc-001",
+      "title": "Employee Handbook",
+      "heading": "Remote Work",
+      "text": "Employees may work remotely (work from home) up to two days per week after completing their first 30 days.",
+      "source_page": 9
+    },
+    {
+      "section_id": "sec-005",
+      "document_id": "doc-002",
+      "title": "Benefits Guide",
+      "heading": "Health Insurance",
+      "text": "Enroll in health insurance within 30 days of your start date through the benefits portal. Coverage begins on the first day of the following month.",
+      "source_page": 3
+    },
+    {
+      "section_id": "sec-006",
+      "document_id": "doc-002",
+      "title": "Benefits Guide",
+      "heading": "Retirement Plan",
+      "text": "Brightpath will match your 401k retirement contributions up to 4 percent of your salary. You can enroll at any time.",
+      "source_page": 5
+    },
+    {
+      "section_id": "sec-007",
+      "document_id": "doc-003",
+      "title": "IT and Security Policy",
+      "heading": "Laptop Setup",
+      "text": "To set up your laptop, sign in with the temporary password from IT, then follow the setup checklist emailed on your first day.",
+      "source_page": 2
+    },
+    {
+      "section_id": "sec-008",
+      "document_id": "doc-003",
+      "title": "IT and Security Policy",
+      "heading": "Passwords",
+      "text": "Passwords must be at least 12 characters and are changed every 90 days. Never share your password, including with IT staff.",
+      "source_page": 4
+    },
+    {
+      "section_id": "sec-009",
+      "document_id": "doc-004",
+      "title": "Payroll FAQ",
+      "heading": "Pay Schedule",
+      "text": "Employees are paid every other Friday. Your first paycheck arrives on the second payday after your start date.",
+      "source_page": 1
+    },
+    {
+      "section_id": "sec-010",
+      "document_id": "doc-004",
+      "title": "Payroll FAQ",
+      "heading": "Direct Deposit",
+      "text": "Set up direct deposit in the payroll portal under Profile, then Banking. Changes take one pay period to apply.",
+      "source_page": 2
+    }
+  ]
+}

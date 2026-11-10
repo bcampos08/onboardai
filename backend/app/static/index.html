@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OnboardAI Demo</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --text: #1f2933; --muted: #616e7c; --border: #d9dee4;
+    --accent: #2f6fde; --accent-text: #ffffff; --user: #e6efff; --fallback: #fff6e0; --fallback-border: #e8c46a;
+    --chip: #eef1f5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+      --bg: #15181c; --panel: #1e2227; --text: #e4e7eb; --muted: #9aa5b1; --border: #343a42;
+      --accent: #5b8ff0; --accent-text: #0e1116; --user: #243553; --fallback: #3a3020; --fallback-border: #8a6d2a;
+      --chip: #2a3038;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 24px 16px; min-height: 100vh; display: flex; flex-direction: column; }
+  header h1 { margin: 0; font-size: 1.6rem; }
+  header p { margin: 6px 0 0; color: var(--muted); font-size: 0.95rem; }
+  .banner { margin-top: 14px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--panel); font-size: 0.88rem; color: var(--muted); }
+  .examples { margin: 18px 0 6px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .examples span { width: 100%; font-size: 0.85rem; color: var(--muted); }
+  .examples button { border: 1px solid var(--border); background: var(--panel); color: var(--text); border-radius: 999px; padding: 7px 14px; font-size: 0.88rem; cursor: pointer; }
+  .examples button:hover { border-color: var(--accent); }
+  #chat { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 16px 0; }
+  .msg { max-width: 85%; padding: 12px 14px; border-radius: 14px; line-height: 1.45; white-space: pre-wrap; }
+  .user { align-self: flex-end; background: var(--user); }
+  .bot { align-self: flex-start; background: var(--panel); border: 1px solid var(--border); }
+  .bot.fallback { background: var(--fallback); border-color: var(--fallback-border); }
+  .label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin-bottom: 4px; }
+  .sources { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .source { background: var(--chip); border-radius: 6px; padding: 4px 8px; font-size: 0.8rem; }
+  .hr-btn { margin-top: 10px; padding: 7px 12px; border-radius: 8px; border: 1px solid var(--fallback-border); background: transparent; color: var(--text); font-size: 0.85rem; cursor: not-allowed; opacity: 0.7; }
+  .note { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
+  form { display: flex; gap: 8px; position: sticky; bottom: 0; background: var(--bg); padding: 12px 0 4px; }
+  input { flex: 1; padding: 12px 14px; font-size: 1rem; border-radius: 10px; border: 1px solid var(--border); background: var(--panel); color: var(--text); }
+  input:focus { outline: 2px solid var(--accent); border-color: transparent; }
+  form button { padding: 0 20px; font-size: 1rem; border: none; border-radius: 10px; background: var(--accent); color: var(--accent-text); cursor: pointer; }
+  form button:disabled { opacity: 0.6; cursor: default; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>OnboardAI</h1>
+    <p>Ask a question about working at Brightpath Inc. Every answer shows where it came from.</p>
+    <div class="banner">Demo mode: answers come from a small made-up company handbook, and a stand-in "mock" AI quotes the best-matching section. The real AI model will be connected later.</div>
+  </header>
+
+  <div class="examples">
+    <span>Try one of these:</span>
+    <button type="button">How do I request time off?</button>
+    <button type="button">When do I get paid?</button>
+    <button type="button">How do I set up my laptop?</button>
+    <button type="button">Can I work from home?</button>
+    <button type="button">What is the parking policy?</button>
+  </div>
+
+  <div id="chat" aria-live="polite"></div>
+
+  <form id="ask">
+    <input id="question" type="text" maxlength="2000" placeholder="Type your question…" autocomplete="off" aria-label="Your question">
+    <button id="send" type="submit">Ask</button>
+  </form>
+</div>
+
+<script>
+  const chat = document.getElementById("chat");
+  const form = document.getElementById("ask");
+  const input = document.getElementById("question");
+  const send = document.getElementById("send");
+  let conversationId = null;
+
+  function addMessage(className, label, text) {
+    const div = document.createElement("div");
+    div.className = "msg " + className;
+    if (label) {
+      const l = document.createElement("div");
+      l.className = "label";
+      l.textContent = label;
+      div.appendChild(l);
+    }
+    const body = document.createElement("div");
+    body.textContent = text;
+    div.appendChild(body);
+    chat.appendChild(div);
+    div.scrollIntoView({ behavior: "smooth", block: "end" });
+    return div;
+  }
+
+  async function ask(question) {
+    question = question.trim();
+    if (!question) return;
+    addMessage("user", "", question);
+    input.value = "";
+    send.disabled = true;
+    const thinking = addMessage("bot", "OnboardAI", "Looking through the handbook…");
+
+    try {
+      const response = await fetch("/api/chat/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question, conversation_id: conversationId }),
+      });
+      if (!response.ok) throw new Error("Server returned " + response.status);
+      const data = await response.json();
+      conversationId = data.conversation_id;
+      thinking.remove();
+
+      if (data.fallback) {
+        const msg = addMessage("bot fallback", "Not in the documents", data.answer);
+        const btn = document.createElement("button");
+        btn.className = "hr-btn";
+        btn.disabled = true;
+        btn.textContent = "Send to HR";
+        msg.appendChild(btn);
+        const note = document.createElement("div");
+        note.className = "note";
+        note.textContent = "Sending questions to HR will be added in a later sprint.";
+        msg.appendChild(note);
+      } else {
+        const msg = addMessage("bot", "OnboardAI", data.answer);
+        const sources = document.createElement("div");
+        sources.className = "sources";
+        for (const c of data.citations) {
+          const chip = document.createElement("span");
+          chip.className = "source";
+          chip.textContent = "📄 " + c.title + " · " + c.section_heading + (c.source_page ? " · p. " + c.source_page : "");
+          sources.appendChild(chip);
+        }
+        msg.appendChild(sources);
+      }
+    } catch (err) {
+      thinking.remove();
+      addMessage("bot fallback", "Connection problem", "Couldn't reach OnboardAI. Make sure the start window is still open, then try again.");
+    } finally {
+      send.disabled = false;
+      input.focus();
+    }
+  }
+
+  form.addEventListener("submit", (e) => { e.preventDefault(); ask(input.value); });
+  document.querySelectorAll(".examples button").forEach((b) => b.addEventListener("click", () => ask(b.textContent)));
+  input.focus();
+</script>
+</body>
+</html>

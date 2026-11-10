@@ -1,0 +1,4 @@
+# Keep line endings correct so the start scripts work on both Windows and Mac.
+*.bat      text eol=crlf
+*.command  text eol=lf
+*.sh       text eol=lf

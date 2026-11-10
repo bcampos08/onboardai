@@ -1,0 +1,10 @@
+# Code owners are automatically requested as reviewers on pull requests that touch their files.
+# Replace the placeholders with your GitHub usernames, then remove the "#" at the start of each line.
+# Owners need write access to the repository.
+
+# *                     @lead-architect-username
+# /docs/                @lead-architect-username
+# /backend/app/ai/      @integration-lead-username
+# /backend/app/routers/ @interface-designer-username
+# /backend/app/schemas.py @interface-designer-username
+# /frontend/            @interface-designer-username
